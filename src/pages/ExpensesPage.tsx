@@ -25,15 +25,21 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
 import { PlusCircle, Search, Filter, MoreHorizontal, FileText, IndianRupee } from 'lucide-react';
-import { recentExpenses } from '@/lib/data';
+import { recentExpenses, addExpense } from '@/lib/data';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import NewExpenseModal from '@/components/NewExpenseModal';
 import { toast } from 'sonner';
+import { Expense } from '@/types/expense';
 
 const ExpensesPage = () => {
   const [newExpenseOpen, setNewExpenseOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [expenses, setExpenses] = useState(recentExpenses);
+  
+  // Update expenses when recentExpenses changes
+  useEffect(() => {
+    setExpenses(recentExpenses);
+  }, [recentExpenses]);
   
   // Filter expenses based on search term
   const filteredExpenses = expenses.filter(expense => 
@@ -45,6 +51,11 @@ const ExpensesPage = () => {
   const handleNewExpense = () => {
     setNewExpenseOpen(true);
     toast.info('Opening new expense form');
+  };
+  
+  const handleAddExpense = (newExpense: Expense) => {
+    const updatedExpenses = addExpense(newExpense);
+    setExpenses([...updatedExpenses]);
   };
 
   const handleFilterClick = () => {
@@ -139,6 +150,8 @@ const ExpensesPage = () => {
                             <Badge 
                               className={`${expense.status === 'Pending' ? 'bg-expense-pending' : 
                                         expense.status === 'Approved' ? 'bg-green-700' : 
+                                        expense.status === 'Reimbursed' ? 'bg-blue-700' :
+                                        expense.status === 'Rejected' ? 'bg-red-700' :
                                         'bg-expense-travel'} text-xs font-normal`}
                             >
                               {expense.status}
@@ -180,7 +193,11 @@ const ExpensesPage = () => {
           </Card>
         </main>
       </div>
-      <NewExpenseModal open={newExpenseOpen} onOpenChange={setNewExpenseOpen} />
+      <NewExpenseModal 
+        open={newExpenseOpen} 
+        onOpenChange={setNewExpenseOpen} 
+        onAddExpense={handleAddExpense}
+      />
     </div>
   );
 };

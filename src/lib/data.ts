@@ -79,7 +79,7 @@ const descriptions = [
 ];
 
 // Generate random recent expenses
-export const recentExpenses: Expense[] = Array.from({ length: 15 }, (_, i) => {
+export let recentExpenses: Expense[] = Array.from({ length: 15 }, (_, i) => {
   const date = getRandomDate(new Date(2024, 0, 1), new Date());
   return {
     id: generateId(),
@@ -92,6 +92,12 @@ export const recentExpenses: Expense[] = Array.from({ length: 15 }, (_, i) => {
     team: ["Marketing", "Engineering", "Finance", "HR", "Sales"][Math.floor(Math.random() * 5)]
   };
 });
+
+// Function to add new expense
+export const addExpense = (expense: Expense) => {
+  recentExpenses = [expense, ...recentExpenses];
+  return recentExpenses;
+};
 
 // Generate team spending data
 export const teamSpending: TeamSpending[] = [
@@ -119,6 +125,12 @@ export const getStatusColor = (status: string): string => {
       return 'bg-expense-marketing';
     case 'Pending':
       return 'bg-expense-pending';
+    case 'Approved':
+      return 'bg-green-700';
+    case 'Rejected':
+      return 'bg-red-700';
+    case 'Reimbursed':
+      return 'bg-blue-700';
     case 'Travel':
       return 'bg-expense-travel';
     default:

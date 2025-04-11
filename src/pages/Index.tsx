@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 import NewExpenseModal from '@/components/NewExpenseModal';
 import { toast } from 'sonner';
+import { addExpense } from '@/lib/data';
+import { Expense } from '@/types/expense';
 
 const Index = () => {
   const [newExpenseOpen, setNewExpenseOpen] = useState(false);
@@ -13,6 +15,10 @@ const Index = () => {
   const handleNewExpense = () => {
     setNewExpenseOpen(true);
     toast.info('Opening new expense form');
+  };
+  
+  const handleAddExpense = (newExpense: Expense) => {
+    addExpense(newExpense);
   };
 
   return (
@@ -37,7 +43,11 @@ const Index = () => {
           <Dashboard />
         </main>
       </div>
-      <NewExpenseModal open={newExpenseOpen} onOpenChange={setNewExpenseOpen} />
+      <NewExpenseModal 
+        open={newExpenseOpen} 
+        onOpenChange={setNewExpenseOpen}
+        onAddExpense={handleAddExpense}
+      />
     </div>
   );
 };

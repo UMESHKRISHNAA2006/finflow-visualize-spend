@@ -11,10 +11,13 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { CalendarIcon, IndianRupee } from "lucide-react";
+import { generateId } from "@/lib/utils";
+import { Expense } from "@/types/expense";
 
 interface NewExpenseModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onAddExpense?: (expense: Expense) => void;
 }
 
 const categories = [
@@ -26,11 +29,14 @@ const categories = [
   "Other"
 ];
 
-const NewExpenseModal = ({ open, onOpenChange }: NewExpenseModalProps) => {
+const teams = ["Engineering", "Marketing", "Finance", "Sales", "HR"];
+
+const NewExpenseModal = ({ open, onOpenChange, onAddExpense }: NewExpenseModalProps) => {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [amount, setAmount] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [category, setCategory] = useState<string>('');
+  const [team, setTeam] = useState<string>('');
   const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -45,13 +51,22 @@ const NewExpenseModal = ({ open, onOpenChange }: NewExpenseModalProps) => {
       return;
     }
     
-    // In a real app, this would send data to an API
-    console.log({
-      amount,
-      description,
-      category,
+    const newExpense: Expense = {
+      id: generateId(),
+      amount: Number(amount),
       date: date ? format(date, 'yyyy-MM-dd') : '',
-    });
+      category: category as any,
+      description: description,
+      status: "Pending",
+      employee: "Umesh Krishnaa",
+      team: team || "Marketing"
+    };
+    
+    console.log(newExpense);
+    
+    if (onAddExpense) {
+      onAddExpense(newExpense);
+    }
     
     toast({
       title: "Expense created",
@@ -62,6 +77,7 @@ const NewExpenseModal = ({ open, onOpenChange }: NewExpenseModalProps) => {
     setAmount('');
     setDescription('');
     setCategory('');
+    setTeam('');
     setDate(new Date());
     
     onOpenChange(false);
@@ -102,6 +118,20 @@ const NewExpenseModal = ({ open, onOpenChange }: NewExpenseModalProps) => {
               <SelectContent>
                 {categories.map((cat) => (
                   <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="team">Team</Label>
+            <Select value={team} onValueChange={setTeam}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a team" />
+              </SelectTrigger>
+              <SelectContent>
+                {teams.map((t) => (
+                  <SelectItem key={t} value={t}>{t}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
