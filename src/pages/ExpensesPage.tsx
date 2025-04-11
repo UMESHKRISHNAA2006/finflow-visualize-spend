@@ -28,6 +28,7 @@ import { PlusCircle, Search, Filter, MoreHorizontal, FileText } from 'lucide-rea
 import { recentExpenses } from '@/lib/data';
 import { formatCurrency } from '@/lib/utils';
 import NewExpenseModal from '@/components/NewExpenseModal';
+import { toast } from 'sonner';
 
 const ExpensesPage = () => {
   const [newExpenseOpen, setNewExpenseOpen] = useState(false);
@@ -35,10 +36,39 @@ const ExpensesPage = () => {
   
   // Filter expenses based on search term
   const filteredExpenses = recentExpenses.filter(expense => 
-    expense.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    expense.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    expense.employee.toLowerCase().includes(searchTerm.toLowerCase())
+    expense.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    expense.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    expense.employee?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleNewExpense = () => {
+    setNewExpenseOpen(true);
+    toast.info('Opening new expense form');
+  };
+
+  const handleFilterClick = () => {
+    toast.info('Filter options', {
+      description: 'Filter options will appear here'
+    });
+  };
+
+  const handleExportClick = () => {
+    toast.info('Export options', {
+      description: 'Export to CSV/PDF options will appear here'
+    });
+  };
+
+  const handleViewDetails = () => {
+    toast.info('Viewing expense details');
+  };
+
+  const handleEdit = () => {
+    toast.info('Editing expense');
+  };
+
+  const handleDownloadReceipt = () => {
+    toast.info('Downloading receipt');
+  };
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-black to-slate-900">
@@ -50,7 +80,7 @@ const ExpensesPage = () => {
             <p className="text-muted-foreground">Manage and track all expenses</p>
           </div>
           <Button 
-            onClick={() => setNewExpenseOpen(true)}
+            onClick={handleNewExpense}
             className="bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700"
           >
             <PlusCircle className="mr-2 h-4 w-4" />
@@ -73,10 +103,10 @@ const ExpensesPage = () => {
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
                   </div>
-                  <Button variant="outline" size="icon">
+                  <Button variant="outline" size="icon" onClick={handleFilterClick}>
                     <Filter className="h-4 w-4" />
                   </Button>
-                  <Button variant="outline" size="icon">
+                  <Button variant="outline" size="icon" onClick={handleExportClick}>
                     <FileText className="h-4 w-4" />
                   </Button>
                 </div>
@@ -124,9 +154,9 @@ const ExpensesPage = () => {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem>View Details</DropdownMenuItem>
-                                <DropdownMenuItem>Edit</DropdownMenuItem>
-                                <DropdownMenuItem>Download Receipt</DropdownMenuItem>
+                                <DropdownMenuItem onClick={handleViewDetails}>View Details</DropdownMenuItem>
+                                <DropdownMenuItem onClick={handleEdit}>Edit</DropdownMenuItem>
+                                <DropdownMenuItem onClick={handleDownloadReceipt}>Download Receipt</DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
                           </TableCell>

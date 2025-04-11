@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Home, Receipt, Plane, CheckSquare, Settings, HelpCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -7,16 +6,12 @@ const AppSidebar = () => {
   return (
     <div className="h-screen w-64 bg-sidebar fixed left-0 top-0 flex flex-col animate-slide-in">
       <div className="p-6 flex items-center justify-center">
-        <div className="rounded-full w-16 h-16 bg-gradient-to-br from-purple-400 to-indigo-600 flex items-center justify-center overflow-hidden">
-          <img 
-            src="/lovable-uploads/278d2282-7efe-477a-b8f2-e8041fdab25a.png" 
-            alt="User Profile" 
-            className="w-full h-full object-cover"
-          />
+        <div className="rounded-full w-16 h-16 bg-gradient-to-br from-purple-400 to-indigo-600 flex items-center justify-center">
+          <span className="text-white text-2xl font-bold">UK</span>
         </div>
       </div>
       <div className="text-center text-sidebar-foreground mb-6">
-        <p className="font-medium">Janice Chandler</p>
+        <p className="font-medium">Umesh Krishnaa</p>
       </div>
       
       <nav className="flex-1 px-4">

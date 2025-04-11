@@ -3,8 +3,33 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, Receipt, FileBarChart, Plane } from 'lucide-react';
+import { toast } from 'sonner';
 
 const QuickAccess = () => {
+  const handleNewExpense = () => {
+    toast.success('Creating new expense...', {
+      description: 'New expense form will open'
+    });
+  };
+
+  const handleAddReceipt = () => {
+    toast.success('Adding receipt...', {
+      description: 'Receipt upload screen will open'
+    });
+  };
+
+  const handleCreateReport = () => {
+    toast.success('Creating report...', {
+      description: 'Report generation wizard will start'
+    });
+  };
+
+  const handleCreateTrip = () => {
+    toast.success('Creating trip...', {
+      description: 'Trip creation form will open'
+    });
+  };
+
   return (
     <Card className="glass-card animate-fade-in">
       <CardHeader className="pb-2">
@@ -15,25 +40,25 @@ const QuickAccess = () => {
           <QuickAccessButton 
             icon={<PlusCircle className="text-pink-400" />}
             label="New expense"
-            onClick={() => {}}
+            onClick={handleNewExpense}
             color="bg-pink-950/40"
           />
           <QuickAccessButton 
             icon={<Receipt className="text-blue-400" />}
             label="Add receipt"
-            onClick={() => {}}
+            onClick={handleAddReceipt}
             color="bg-blue-950/40"
           />
           <QuickAccessButton 
             icon={<FileBarChart className="text-green-400" />}
             label="Create report"
-            onClick={() => {}}
+            onClick={handleCreateReport}
             color="bg-green-950/40"
           />
           <QuickAccessButton 
             icon={<Plane className="text-purple-400" />}
             label="Create trip"
-            onClick={() => {}}
+            onClick={handleCreateTrip}
             color="bg-purple-950/40"
           />
         </div>
