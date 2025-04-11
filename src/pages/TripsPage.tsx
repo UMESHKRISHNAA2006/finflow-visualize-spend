@@ -1,11 +1,11 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AppSidebar from '@/components/AppSidebar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PlusCircle, MapPin, CalendarIcon, Clock, BadgeIndianRupee } from 'lucide-react';
+import { PlusCircle, MapPin, CalendarIcon, Clock, IndianRupee } from 'lucide-react';
 import { toast } from 'sonner';
-import { generateId } from '@/lib/utils';
+import { generateId, formatDate } from '@/lib/utils';
 
 interface Trip {
   id: string;
@@ -19,6 +19,98 @@ interface Trip {
 
 const TripsPage = () => {
   const [trips, setTrips] = useState<Trip[]>([]);
+
+  // Generate fake trip data when component loads
+  useEffect(() => {
+    // Cities in India for destinations
+    const cities = [
+      'Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Hyderabad', 
+      'Kolkata', 'Pune', 'Ahmedabad', 'Jaipur', 'Lucknow'
+    ];
+    
+    // Business purposes
+    const purposes = [
+      'Client Meeting', 'Conference', 'Team Offsite', 
+      'Branch Visit', 'Product Launch', 'Training Workshop',
+      'Sales Pitch', 'Industry Summit', 'Partner Meeting'
+    ];
+    
+    // Generate random date within a range
+    const getRandomDate = (start: Date, end: Date) => {
+      return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+    };
+    
+    // Format date to ISO string, but just take the date part
+    const formatDateString = (date: Date) => {
+      return date.toISOString().split('T')[0];
+    };
+    
+    // Current date
+    const now = new Date();
+    
+    // Create 3 upcoming trips
+    const upcomingTrips = Array.from({ length: 3 }, () => {
+      const startDate = getRandomDate(
+        new Date(now.getFullYear(), now.getMonth(), now.getDate() + 5), 
+        new Date(now.getFullYear(), now.getMonth(), now.getDate() + 30)
+      );
+      const endDate = new Date(startDate);
+      endDate.setDate(startDate.getDate() + Math.floor(Math.random() * 5) + 2); // 2-7 day trip
+      
+      return {
+        id: generateId(),
+        destination: cities[Math.floor(Math.random() * cities.length)],
+        startDate: formatDateString(startDate),
+        endDate: formatDateString(endDate),
+        purpose: purposes[Math.floor(Math.random() * purposes.length)],
+        status: 'upcoming' as const,
+        budget: Math.floor(Math.random() * 70000) + 20000 // 20k-90k budget
+      };
+    });
+    
+    // Create 2 ongoing trips
+    const ongoingTrips = Array.from({ length: 2 }, () => {
+      const startDate = getRandomDate(
+        new Date(now.getFullYear(), now.getMonth(), now.getDate() - 3), 
+        new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1)
+      );
+      const endDate = new Date(startDate);
+      endDate.setDate(startDate.getDate() + Math.floor(Math.random() * 5) + 2);
+      
+      return {
+        id: generateId(),
+        destination: cities[Math.floor(Math.random() * cities.length)],
+        startDate: formatDateString(startDate),
+        endDate: formatDateString(endDate),
+        purpose: purposes[Math.floor(Math.random() * purposes.length)],
+        status: 'ongoing' as const,
+        budget: Math.floor(Math.random() * 50000) + 15000 // 15k-65k budget
+      };
+    });
+    
+    // Create 4 completed trips
+    const completedTrips = Array.from({ length: 4 }, () => {
+      const startDate = getRandomDate(
+        new Date(now.getFullYear(), now.getMonth() - 3, 1), 
+        new Date(now.getFullYear(), now.getMonth() - 1, 15)
+      );
+      const endDate = new Date(startDate);
+      endDate.setDate(startDate.getDate() + Math.floor(Math.random() * 5) + 2);
+      
+      return {
+        id: generateId(),
+        destination: cities[Math.floor(Math.random() * cities.length)],
+        startDate: formatDateString(startDate),
+        endDate: formatDateString(endDate),
+        purpose: purposes[Math.floor(Math.random() * purposes.length)],
+        status: 'completed' as const,
+        budget: Math.floor(Math.random() * 40000) + 10000 // 10k-50k budget
+      };
+    });
+    
+    // Combine all trips
+    setTrips([...upcomingTrips, ...ongoingTrips, ...completedTrips]);
+  }, []);
 
   const handleCreateTrip = () => {
     const newTrip: Trip = {
@@ -132,12 +224,12 @@ const TripCard = ({ trip }: TripCardProps) => {
         <div>
           <h3 className="font-semibold">{trip.destination}</h3>
           <p className="text-sm text-muted-foreground">
-            {new Date(trip.startDate).toLocaleDateString()} - {new Date(trip.endDate).toLocaleDateString()}
+            {formatDate(trip.startDate)} - {formatDate(trip.endDate)}
           </p>
           <p className="text-xs text-muted-foreground mt-1">{trip.purpose}</p>
         </div>
         <div className="flex items-center">
-          <BadgeIndianRupee className="h-3 w-3 mr-1 text-green-400" />
+          <IndianRupee className="h-3 w-3 mr-1 text-green-400" />
           <span className="text-sm font-medium">{trip.budget.toLocaleString('en-IN')}</span>
         </div>
       </div>

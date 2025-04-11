@@ -10,7 +10,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, IndianRupee } from "lucide-react";
 
 interface NewExpenseModalProps {
   open: boolean;
@@ -81,7 +81,7 @@ const NewExpenseModal = ({ open, onOpenChange }: NewExpenseModalProps) => {
           <div className="space-y-2">
             <Label htmlFor="amount">Amount</Label>
             <div className="relative">
-              <span className="absolute left-3 top-2.5 text-muted-foreground">$</span>
+              <span className="absolute left-3 top-2.5 text-muted-foreground">₹</span>
               <Input 
                 id="amount" 
                 className="pl-7" 

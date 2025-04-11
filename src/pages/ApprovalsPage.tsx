@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AppSidebar from '@/components/AppSidebar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,12 +7,12 @@ import {
   CheckCircle2, 
   XCircle, 
   Clock, 
-  BadgeIndianRupee,
+  IndianRupee,
   Filter
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { Tab, Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { generateId } from '@/lib/utils';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { generateId, formatDate } from '@/lib/utils';
 
 interface Approval {
   id: string;
@@ -27,6 +27,39 @@ interface Approval {
 const ApprovalsPage = () => {
   const [approvals, setApprovals] = useState<Approval[]>([]);
   const [activeTab, setActiveTab] = useState('pending');
+
+  // Generate some fake approval data when component mounts
+  useEffect(() => {
+    const categories = ['Travel', 'Office Supplies', 'Food', 'Entertainment', 'Miscellaneous'];
+    const names = ["Ananya Sharma", "Rajesh Kumar", "Priya Patel", "Vikram Singh", "Neha Gupta"];
+    const titles = [
+      "Chennai client visit expenses", 
+      "Office supplies restock", 
+      "Team lunch meetup", 
+      "Marketing event expenses", 
+      "Annual conference registration",
+      "Quarterly department dinner",
+      "Software subscription renewal"
+    ];
+    
+    const fakeApprovals: Approval[] = Array.from({ length: 10 }, (_, i) => {
+      // Create dates within the last 14 days
+      const date = new Date();
+      date.setDate(date.getDate() - Math.floor(Math.random() * 14));
+      
+      return {
+        id: generateId(),
+        title: titles[Math.floor(Math.random() * titles.length)],
+        amount: Math.floor(Math.random() * 15000) + 2000,
+        submittedBy: names[Math.floor(Math.random() * names.length)],
+        submittedDate: date.toISOString(),
+        status: ['pending', 'approved', 'rejected'][Math.floor(Math.random() * 3)] as 'pending' | 'approved' | 'rejected',
+        category: categories[Math.floor(Math.random() * categories.length)],
+      };
+    });
+    
+    setApprovals(fakeApprovals);
+  }, []);
 
   const handleApprove = (id: string) => {
     setApprovals(approvals.map(approval => 
@@ -107,38 +140,116 @@ const ApprovalsPage = () => {
               All
             </TabsTrigger>
           </TabsList>
+          
+          <TabsContent value="pending">
+            <Card className="glass-card">
+              <CardHeader>
+                <CardTitle>Pending Expense Approvals</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {filteredApprovals.length > 0 ? (
+                  <div className="space-y-4">
+                    {filteredApprovals.map(approval => (
+                      <ApprovalCard 
+                        key={approval.id} 
+                        approval={approval} 
+                        onApprove={handleApprove} 
+                        onReject={handleReject}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-10">
+                    <p className="text-muted-foreground">No approvals to display</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {activeTab === 'pending' 
+                        ? 'All caught up! No pending approvals.' 
+                        : `No ${activeTab} approvals found.`}
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="approved">
+            <Card className="glass-card">
+              <CardHeader>
+                <CardTitle>Approved Expense Requests</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {filteredApprovals.length > 0 ? (
+                  <div className="space-y-4">
+                    {filteredApprovals.map(approval => (
+                      <ApprovalCard 
+                        key={approval.id} 
+                        approval={approval} 
+                        onApprove={handleApprove} 
+                        onReject={handleReject}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-10">
+                    <p className="text-muted-foreground">No approvals to display</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="rejected">
+            <Card className="glass-card">
+              <CardHeader>
+                <CardTitle>Rejected Expense Requests</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {filteredApprovals.length > 0 ? (
+                  <div className="space-y-4">
+                    {filteredApprovals.map(approval => (
+                      <ApprovalCard 
+                        key={approval.id} 
+                        approval={approval} 
+                        onApprove={handleApprove} 
+                        onReject={handleReject}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-10">
+                    <p className="text-muted-foreground">No approvals to display</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="all">
+            <Card className="glass-card">
+              <CardHeader>
+                <CardTitle>All Expense Requests</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {filteredApprovals.length > 0 ? (
+                  <div className="space-y-4">
+                    {filteredApprovals.map(approval => (
+                      <ApprovalCard 
+                        key={approval.id} 
+                        approval={approval} 
+                        onApprove={handleApprove} 
+                        onReject={handleReject}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-10">
+                    <p className="text-muted-foreground">No approvals to display</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
-        
-        <main>
-          <Card className="glass-card">
-            <CardHeader>
-              <CardTitle>Expense Approvals</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {filteredApprovals.length > 0 ? (
-                <div className="space-y-4">
-                  {filteredApprovals.map(approval => (
-                    <ApprovalCard 
-                      key={approval.id} 
-                      approval={approval} 
-                      onApprove={handleApprove} 
-                      onReject={handleReject}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-10">
-                  <p className="text-muted-foreground">No approvals to display</p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {activeTab === 'pending' 
-                      ? 'All caught up! No pending approvals.' 
-                      : `No ${activeTab} approvals found.`}
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </main>
       </div>
     </div>
   );
@@ -157,11 +268,11 @@ const ApprovalCard = ({ approval, onApprove, onReject }: ApprovalCardProps) => {
         <div>
           <h3 className="font-semibold">{approval.title}</h3>
           <div className="flex items-center gap-1 mt-1">
-            <BadgeIndianRupee className="h-3 w-3 text-green-400" />
+            <IndianRupee className="h-3 w-3 text-green-400" />
             <span className="text-sm font-medium">{approval.amount.toLocaleString('en-IN')}</span>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            Submitted by {approval.submittedBy} on {new Date(approval.submittedDate).toLocaleDateString()}
+            Submitted by {approval.submittedBy} on {formatDate(approval.submittedDate)}
           </p>
           <div className="mt-2">
             <span className="text-xs px-2 py-1 rounded-full bg-white/10">{approval.category}</span>

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AppSidebar from '@/components/AppSidebar';
 import { 
   Card, 
@@ -24,18 +24,19 @@ import {
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
-import { PlusCircle, Search, Filter, MoreHorizontal, FileText } from 'lucide-react';
+import { PlusCircle, Search, Filter, MoreHorizontal, FileText, IndianRupee } from 'lucide-react';
 import { recentExpenses } from '@/lib/data';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency, formatDate } from '@/lib/utils';
 import NewExpenseModal from '@/components/NewExpenseModal';
 import { toast } from 'sonner';
 
 const ExpensesPage = () => {
   const [newExpenseOpen, setNewExpenseOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [expenses, setExpenses] = useState(recentExpenses);
   
   // Filter expenses based on search term
-  const filteredExpenses = recentExpenses.filter(expense => 
+  const filteredExpenses = expenses.filter(expense => 
     expense.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     expense.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     expense.employee?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -133,7 +134,7 @@ const ExpensesPage = () => {
                           <TableCell className="font-medium">{expense.description}</TableCell>
                           <TableCell>{expense.category}</TableCell>
                           <TableCell>{expense.employee}</TableCell>
-                          <TableCell>{new Date(expense.date).toLocaleDateString()}</TableCell>
+                          <TableCell>{formatDate(expense.date)}</TableCell>
                           <TableCell>
                             <Badge 
                               className={`${expense.status === 'Pending' ? 'bg-expense-pending' : 
@@ -144,7 +145,10 @@ const ExpensesPage = () => {
                             </Badge>
                           </TableCell>
                           <TableCell className="text-right font-medium">
-                            {formatCurrency(expense.amount)}
+                            <div className="flex items-center justify-end">
+                              <IndianRupee className="h-3 w-3 mr-1 text-muted-foreground" />
+                              <span>{expense.amount.toLocaleString('en-IN')}</span>
+                            </div>
                           </TableCell>
                           <TableCell>
                             <DropdownMenu>
