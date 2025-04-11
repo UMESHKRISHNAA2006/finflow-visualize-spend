@@ -7,9 +7,9 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('en-IN', {
     style: 'currency',
-    currency: 'EUR',
+    currency: 'INR',
     minimumFractionDigits: 2,
   }).format(amount);
 }
@@ -20,7 +20,7 @@ export function generateId(): string {
 
 export function formatDate(dateString: string): string {
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString('en-IN', {
     month: 'short',
     day: 'numeric',
     year: 'numeric'
